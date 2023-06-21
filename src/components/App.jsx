@@ -5,55 +5,47 @@ import { ContactList } from './ContactList/ContactList';
 import { nanoid } from 'nanoid';
 
 export function App() {
-  const [state, setState] = useState({
-    contacts: [],
-    filter: '',
-  });
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     if (localStorage.getItem('phonebook') === null) {
       localStorage.setItem('phonebook', JSON.stringify([]));
     } else {
-      setState({
-        contacts: JSON.parse(localStorage.getItem('phonebook')),
-        filter: '',
-      });
+      setContacts(JSON.parse(localStorage.getItem('phonebook')));
     }
   }, []);
 
   const handleFormSubmit = input => {
-    if (!state.contacts.map(contact => contact.name).includes(input.name)) {
+    if (!contacts.map(contact => contact.name).includes(input.name)) {
       const newContact = {
         id: nanoid(),
         name: input.name,
         number: input.number,
       };
-      setState(prev => ({ ...prev, contacts: [...prev.contacts, newContact] }));
+      setContacts([...contacts, newContact]);
     } else {
       alert(`${input.name} is already in contacts.`);
     }
   };
 
   const setFilterToState = value => {
-    setState(prev => ({ ...prev, filter: value }));
+    setFilter(value);
   };
 
   const filteredContacts = contacts => {
     return contacts.filter(contact =>
-      contact.name.toLocaleUpperCase().includes(state.filter)
+      contact.name.toLocaleUpperCase().includes(filter)
     );
   };
 
-  const handleElementDelete = id => {
-    setState(prev => ({
-      ...prev,
-      contacts: [...prev.contacts.filter(contact => contact.id !== id)],
-    }));
+  const handleContactDelete = id => {
+    setContacts(contacts.filter(contact => contact.id !== id));
   };
 
   useEffect(() => {
-    localStorage.setItem('phonebook', JSON.stringify(state.contacts));
-  }, [state.contacts]);
+    localStorage.setItem('phonebook', JSON.stringify(contacts));
+  }, [contacts]);
 
   return (
     <div className="main">
@@ -62,8 +54,8 @@ export function App() {
       <h2>Contacts</h2>
       <Filter onFilterInput={setFilterToState} />
       <ContactList
-        contacts={filteredContacts(state.contacts)}
-        onContactDelete={handleElementDelete}
+        contacts={filteredContacts(contacts)}
+        onContactDelete={handleContactDelete}
       />
     </div>
   );

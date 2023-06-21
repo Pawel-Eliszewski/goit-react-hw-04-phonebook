@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import css from './ContactList.module.css';
 
 export const ContactList = ({ contacts, onContactDelete }) => {
-  const deleteContact = id => {
-    onContactDelete(id);
-  };
-
   return (
     <ul>
       {contacts.map(contact => {
@@ -16,7 +12,7 @@ export const ContactList = ({ contacts, onContactDelete }) => {
             <button
               key={nanoid()}
               className={css.btn}
-              onClick={() => deleteContact(contact.id)}
+              onClick={() => onContactDelete(contact.id)}
             >
               Delete
             </button>
